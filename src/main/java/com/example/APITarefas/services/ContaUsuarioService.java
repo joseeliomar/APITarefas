@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.example.APITarefas.controllers.ContaUsuarioRecordDto;
+import com.example.APITarefas.dtos.ContaUsuarioRecordDto;
 import com.example.APITarefas.entities.ContaUsuario;
 import com.example.APITarefas.exceptions.ValidacaoException;
 import com.example.APITarefas.repositories.ContaUsuarioRepository;
@@ -22,10 +22,10 @@ public class ContaUsuarioService {
 	private ContaUsuarioRepository contaUsuarioRepository;
 
 	/**
-	 * Cria uma conta de usuário.
+	 * Cria uma conta de usuário e a salva.
 	 * 
 	 * @param contaUsuarioRecordDto
-	 * @return a conta criada.
+	 * @return a conta criada e salva.
 	 */
 	public ContaUsuario criaContaUsuario(ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
@@ -90,11 +90,11 @@ public class ContaUsuarioService {
 	}
 
 	/**
-	 * Altera uma conta de usuário.
+	 * Altera uma conta de usuário e a salva.
 	 * 
 	 * @param id
 	 * @param contaUsuarioRecordDto
-	 * @return a conta alterada.
+	 * @return a conta alterada e salva.
 	 */
 	public ContaUsuario alteraContaUsuario(Long id, ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuario = buscaContaUsuario(id);
@@ -121,12 +121,13 @@ public class ContaUsuarioService {
 	}
 
 	/**
-	 * Busca conta de usuário pelo id.
+	 * Busca conta de usuário pelo id informado.
 	 * 
 	 * @param id
 	 * @return a conta de usuário correspondente ao id informado.
 	 */
 	public ContaUsuario buscaContaUsuario(Long id) {
+		validaIdContaUsuarioInformado(id);
 		Optional<ContaUsuario> optionalContaUsuario = this.contaUsuarioRepository.findById(id);
 		
 		if (optionalContaUsuario.isEmpty()) {
@@ -145,6 +146,27 @@ public class ContaUsuarioService {
 	public Page<ContaUsuario> buscaContasUsuarios(Pageable pageable) {
 		Page<ContaUsuario> contasUsuarios = this.contaUsuarioRepository.findAll(pageable);
 		return contasUsuarios;
+	}
+
+	/**
+	 * Remove uma conta de usuário pelo id informado.
+	 * 
+	 * @param id
+	 */
+	public void removeContaUsuario(Long id) {
+		ContaUsuario contaUsuario = this.buscaContaUsuario(id);
+		this.contaUsuarioRepository.delete(contaUsuario);
+	}
+
+	/**
+	 * Valida se o código da conta do usuário não foi informado.
+	 * 
+	 * @param id
+	 */
+	public void validaIdContaUsuarioInformado(Long id) {
+		if (id == null) {
+			throw new ValidacaoException("O código da conta do usuário não foi informado.", HttpStatus.BAD_REQUEST);
+		}
 	}
 
 }

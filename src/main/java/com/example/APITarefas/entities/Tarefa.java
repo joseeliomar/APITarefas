@@ -49,7 +49,7 @@ public class Tarefa implements Serializable {
 
 	public Tarefa(ContaUsuario contaUsuario, String titulo, String descricao, LocalDateTime dataHoraCriacao,
 			LocalDateTime dataHoraAlteracao, LocalDateTime dataHoraNotificacao,
-			OpcaoRepeticaoNotificacao opcaoRepeticaoNotificacao, PersonalizacaoNotificacao personalizacaoNotificacao) {
+			OpcaoRepeticaoNotificacao opcaoRepeticaoNotificacao, PersonalizacaoNotificacao personalizacaoNotificacao, List<Etiqueta> etiquetas) {
 		this.contaUsuario = contaUsuario;
 		this.titulo = titulo;
 		this.descricao = descricao;
@@ -58,6 +58,11 @@ public class Tarefa implements Serializable {
 		this.dataHoraNotificacao = dataHoraNotificacao;
 		this.opcaoRepeticaoNotificacao = opcaoRepeticaoNotificacao;
 		this.personalizacaoNotificacao = personalizacaoNotificacao;
+		if (etiquetas == null) {
+			this.etiquetas = new ArrayList<>();
+		} else {
+			this.etiquetas = etiquetas;
+		}
 	}
 
 	public Long getId() {

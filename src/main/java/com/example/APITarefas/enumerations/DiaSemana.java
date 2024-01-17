@@ -1,7 +1,7 @@
 package com.example.APITarefas.enumerations;
 
 public enum DiaSemana {
-	DOMINGO(1, "Não repetir"),
+	DOMINGO(1, "Domingo"),
 	SEGUNDA_FEIRA(2, "Segunda-feira"), 
 	TERCA_FEIRA(3, "Terça-feira"),
 	QUARTA_FEIRA(4, "Quarta-feira"),
@@ -17,7 +17,7 @@ public enum DiaSemana {
 		this.descricao = descricao;
 	}
 	
-	public DiaSemana obterOpcaoPorCodigo(int codigo) {
+	public static DiaSemana obterOpcaoPorCodigo(int codigo) {
 		for (DiaSemana opcao: DiaSemana.values()) {
 			if (opcao.codigo == codigo) {
 				return opcao;
