@@ -23,12 +23,12 @@ public class PersonalizacaoNotificacaoService {
 	private DiaSemanaPersonalizacaoNotificacaoService diaSemanaPersonalizacaoNotificacaoService;
 
 	/**
-	 * Cria uma personalização de notificação e a salva.
+	 * Insere uma personalização de notificação.
 	 * 
 	 * @param personalizacaoNotificacaoDto
-	 * @return a personalização da notificação que foi criada e salva.
+	 * @return a personalização da notificação inserida.
 	 */
-	public PersonalizacaoNotificacao criaPersonalizacaoNotificacao(PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto) {
+	public PersonalizacaoNotificacao inserePersonalizacaoNotificacao(PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto) {
 		if (personalizacaoNotificacaoDto == null) {
 			throw new ValidacaoException(
 					"Os dados obrigatórios para a personalização da repetição da notificação da tarefa precisam ser informados.",
@@ -78,23 +78,23 @@ public class PersonalizacaoNotificacaoService {
 			}
 		}
 		
-		PersonalizacaoNotificacao personalizacaoNotificacaoCriadaSalva = this.personalizacaoNotificacaoRepository
+		PersonalizacaoNotificacao personalizacaoNotificacaoInserida = this.personalizacaoNotificacaoRepository
 				.save(new PersonalizacaoNotificacao(quantidade, medidaTempo));
-		relacionaDiasSemanaComPersonalizacaoNotificacao(diasSemana, personalizacaoNotificacaoCriadaSalva);
+		insereDiasSemanaPersonalizacaoNotificacao(diasSemana, personalizacaoNotificacaoInserida);
 		
-		return personalizacaoNotificacaoCriadaSalva;
+		return personalizacaoNotificacaoInserida;
 	}
 
 	/**
-	 * relaciona dias da semana com a personalização da notificação.
+	 * Insere os dias da semana associados com a personalização da notificação.
 	 * 
 	 * @param diasSemana
 	 * @param personalizacaoNotificacao
 	 */
-	private void relacionaDiasSemanaComPersonalizacaoNotificacao(ArrayList<DiaSemana> diasSemana,
+	private void insereDiasSemanaPersonalizacaoNotificacao(ArrayList<DiaSemana> diasSemana,
 			PersonalizacaoNotificacao personalizacaoNotificacao) {
 		for (DiaSemana diaSemana : diasSemana) {
-			diaSemanaPersonalizacaoNotificacaoService.criaDiaSemanaPersonalizacaoNotificacao(
+			diaSemanaPersonalizacaoNotificacaoService.insereDiaSemanaPersonalizacaoNotificacao(
 					new DiaSemanaPersonalizacaoNotificacao(personalizacaoNotificacao, diaSemana));
 		}
 	}

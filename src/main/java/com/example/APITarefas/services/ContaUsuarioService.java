@@ -22,17 +22,17 @@ public class ContaUsuarioService {
 	private ContaUsuarioRepository contaUsuarioRepository;
 
 	/**
-	 * Cria uma conta de usuário e a salva.
+	 * Insere uma conta de usuário.
 	 * 
 	 * @param contaUsuarioRecordDto
-	 * @return a conta criada e salva.
+	 * @return a conta inserida.
 	 */
-	public ContaUsuario criaContaUsuario(ContaUsuarioRecordDto contaUsuarioRecordDto) {
+	public ContaUsuario insereContaUsuario(ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
 		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
 
-		executaValidacoesCriacaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
+		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
 
 		if (this.existeUmaContaUsuarioComEmailInformado(emailUsuario)) {
 			throw new ValidacaoException("Já existe uma conta de usuário com o e-mail informado.", HttpStatus.CONFLICT);
@@ -47,14 +47,14 @@ public class ContaUsuarioService {
 	}
 
 	/**
-	 * Executa validações em comum que devem ser executadas na criação e na
+	 * Executa validações em comum que devem ser executadas na inserção e na
 	 * alteração de uma conta de usuário.
 	 * 
 	 * @param nomeUsuario
 	 * @param emailUsuario
 	 * @param senhaConta
 	 */
-	private void executaValidacoesCriacaoAlteracao(String nomeUsuario, String emailUsuario, String senhaConta) {
+	private void executaValidacoesInsercaoAlteracao(String nomeUsuario, String emailUsuario, String senhaConta) {
 		if (Utils.stringNulaVaziaOuEmBraco(nomeUsuario)) {
 			throw new ValidacaoException("O nome do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
@@ -90,11 +90,11 @@ public class ContaUsuarioService {
 	}
 
 	/**
-	 * Altera uma conta de usuário e a salva.
+	 * Altera uma conta de usuário.
 	 * 
 	 * @param id
 	 * @param contaUsuarioRecordDto
-	 * @return a conta alterada e salva.
+	 * @return a conta alterada.
 	 */
 	public ContaUsuario alteraContaUsuario(Long id, ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuario = buscaContaUsuario(id);
@@ -103,7 +103,7 @@ public class ContaUsuarioService {
 		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
 		
-		executaValidacoesCriacaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
+		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
 		
 		if (this.existeUmaOutraContaUsuarioComEmailInformado(emailUsuario, contaUsuario.getId())) {
 			throw new ValidacaoException("Já existe uma outra conta de usuário com o e-mail informado.", HttpStatus.CONFLICT);

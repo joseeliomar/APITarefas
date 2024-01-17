@@ -46,12 +46,12 @@ public class EtiquetaService {
 	}
 
 	/**
-	 * Cria e salva uma etiqueta.
+	 * Insere uma etiqueta.
 	 * 
 	 * @param etiquetaDto
-	 * @return a etiqueta criada e salva.
+	 * @return a etiqueta inserida.
 	 */
-	public Etiqueta criaEtiqueta(EtiquetaDto etiquetaDto) {
+	public Etiqueta insereEtiqueta(EtiquetaDto etiquetaDto) {
 		String tituloEtiqueta = etiquetaDto.titulo();
 		if (Utils.stringNulaVaziaOuEmBraco(tituloEtiqueta)) {
 			throw new ValidacaoException("O título da etiqueta não foi informado.", HttpStatus.BAD_REQUEST);

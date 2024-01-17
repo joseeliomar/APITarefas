@@ -30,12 +30,12 @@ public class TarefaService {
 	private PersonalizacaoNotificacaoService personalizacaoNotificacaoService;
 
 	/**
-	 * Cria uma tarefa e a salva.
+	 * Insere uma tarefa.
 	 * 
 	 * @param tarefaRecordDto
-	 * @return a tarefa criada e salva.
+	 * @return a tarefa inserida.
 	 */
-	public Tarefa criaTarefa(TarefaRecordDto tarefaRecordDto) {
+	public Tarefa insereTarefa(TarefaRecordDto tarefaRecordDto) {
 		Long idContaUsuario = tarefaRecordDto.idContaUsuario();
 		String tituloTarefa = tarefaRecordDto.titulo();
 		String descricaoTarefa = tarefaRecordDto.descricao();
@@ -61,10 +61,10 @@ public class TarefaService {
 			throw new ValidacaoException("A data e a hora da tarefa não foram informadas.", HttpStatus.BAD_REQUEST);
 		}
 
-		PersonalizacaoNotificacao personalizacaoNotificacaoCriadaSalva = null;
+		PersonalizacaoNotificacao personalizacaoNotificacaoInserida = null;
 		if (opcaoRepeticaoNotificacao.equals(OpcaoRepeticaoNotificacao.PERSONALIZADO)) {
-			personalizacaoNotificacaoCriadaSalva = this.personalizacaoNotificacaoService
-					.criaPersonalizacaoNotificacao(personalizacaoNotificacaoDto);
+			personalizacaoNotificacaoInserida = this.personalizacaoNotificacaoService
+					.inserePersonalizacaoNotificacao(personalizacaoNotificacaoDto);
 		}
 		
 		ArrayList<Etiqueta> etiquetas = new ArrayList<>();
@@ -75,7 +75,7 @@ public class TarefaService {
 		}
 
 		Tarefa tarefa = new Tarefa(contaUsuario, tituloTarefa, descricaoTarefa, LocalDateTime.now(), null,
-				dataHoraNotificacaoTarefa, opcaoRepeticaoNotificacao, personalizacaoNotificacaoCriadaSalva, etiquetas);
+				dataHoraNotificacaoTarefa, opcaoRepeticaoNotificacao, personalizacaoNotificacaoInserida, etiquetas);
 		return this.tarefaRepository.save(tarefa);
 	}
 

@@ -19,8 +19,8 @@ public class TarefaController {
 	private TarefaService tarefaService;
 	
 	@PostMapping
-	public ResponseEntity<Tarefa> criaTarefa(@RequestBody TarefaRecordDto tarefaRecordDto) {
-		Tarefa tarefaCriadaSalva = this.tarefaService.criaTarefa(tarefaRecordDto);
-		return ResponseEntity.created(null).body(tarefaCriadaSalva);  // falta criar a URI
+	public ResponseEntity<Tarefa> insereTarefa(@RequestBody TarefaRecordDto tarefaRecordDto) {
+		Tarefa tarefaInserida = this.tarefaService.insereTarefa(tarefaRecordDto);
+		return ResponseEntity.created(null).body(tarefaInserida);  // falta criar a URI
 	}
 }

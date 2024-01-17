@@ -17,8 +17,8 @@ public class EtiquetaController {
 	private EtiquetaService etiquetaService;
 	
 	@PostMapping
-	public ResponseEntity<Etiqueta> criaEtiqueta(@RequestBody EtiquetaDto etiquetaDto) {
-		Etiqueta etiquetaCriadaSalva = etiquetaService.criaEtiqueta(etiquetaDto);
-		return ResponseEntity.created(null).body(etiquetaCriadaSalva);
+	public ResponseEntity<Etiqueta> insereEtiqueta(@RequestBody EtiquetaDto etiquetaDto) {
+		Etiqueta etiquetaInserida = etiquetaService.insereEtiqueta(etiquetaDto);
+		return ResponseEntity.created(null).body(etiquetaInserida);
 	}
 }

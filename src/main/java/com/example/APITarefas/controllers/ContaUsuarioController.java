@@ -26,15 +26,15 @@ public class ContaUsuarioController {
 	private ContaUsuarioService contaUsuarioService;
 	
 	@PostMapping
-	public ResponseEntity<ContaUsuario> criaContaUsuario(@RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
-		ContaUsuario contaUsuarioCriadaSalva = this.contaUsuarioService.criaContaUsuario(contaUsuarioRecordDto);
-		return ResponseEntity.created(null).body(contaUsuarioCriadaSalva); // falta criar a URI
+	public ResponseEntity<ContaUsuario> insereContaUsuario(@RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
+		ContaUsuario contaUsuarioInserida = this.contaUsuarioService.insereContaUsuario(contaUsuarioRecordDto);
+		return ResponseEntity.created(null).body(contaUsuarioInserida); // falta criar a URI
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable(value = "id") Long id, @RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
-		ContaUsuario contaUsuarioAlteradaSalva = this.contaUsuarioService.alteraContaUsuario(id, contaUsuarioRecordDto);
-		return ResponseEntity.ok(contaUsuarioAlteradaSalva);
+		ContaUsuario contaUsuarioAlterada = this.contaUsuarioService.alteraContaUsuario(id, contaUsuarioRecordDto);
+		return ResponseEntity.ok(contaUsuarioAlterada);
 	}
 	
 	@GetMapping("/{id}")
