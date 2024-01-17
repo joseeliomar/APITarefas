@@ -1,9 +1,10 @@
 package com.example.APITarefas.controllers;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.APITarefas.dtos.ContaUsuarioRecordDto;
 import com.example.APITarefas.entities.ContaUsuario;
 import com.example.APITarefas.services.ContaUsuarioService;
+import com.example.APITarefas.utils.Utils;
 
 @RestController
 @RequestMapping(value = "/contas-usuarios")
@@ -28,9 +30,10 @@ public class ContaUsuarioController {
 	@PostMapping
 	public ResponseEntity<ContaUsuario> insereContaUsuario(@RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuarioInserida = this.contaUsuarioService.insereContaUsuario(contaUsuarioRecordDto);
-		return ResponseEntity.created(null).body(contaUsuarioInserida); // falta criar a URI
+		URI localizacaoRecursoCriado = Utils.obtemLocalizacaoRecursoCriado(contaUsuarioInserida.getId());
+		return ResponseEntity.created(localizacaoRecursoCriado).body(contaUsuarioInserida);
 	}
-	
+
 	@PutMapping("/{id}")
 	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable(value = "id") Long id, @RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuarioAlterada = this.contaUsuarioService.alteraContaUsuario(id, contaUsuarioRecordDto);

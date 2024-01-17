@@ -1,6 +1,9 @@
 package com.example.APITarefas.utils;
 
+import java.net.URI;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class Utils {
 	
@@ -24,5 +27,16 @@ public class Utils {
 	 */
 	public static String criptografaString(String string) {
 		return bCryptPasswordEncoder.encode(string);
+	}
+	
+	/**
+	 * Obtém a localização do recurso inserido.
+	 * 
+	 * @param idRecursoInserido
+	 * @return a localização do recurso inserido.
+	 */
+	public static URI obtemLocalizacaoRecursoCriado(Long idRecursoInserido) {
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(idRecursoInserido).toUri();
+		return uri;
 	}
 }

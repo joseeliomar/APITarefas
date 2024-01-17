@@ -7,5 +7,7 @@ import com.example.APITarefas.entities.Etiqueta;
 
 @Repository
 public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long> {
+	
+	Etiqueta findByTitulo(String tituloEtiqueta);
 
 }

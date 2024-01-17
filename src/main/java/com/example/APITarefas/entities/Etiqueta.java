@@ -24,6 +24,9 @@ public class Etiqueta implements Serializable {
 
 	@ManyToMany(mappedBy = "etiquetas")
 	private List<Tarefa> tarefas = new ArrayList<>();
+	
+	public Etiqueta() {
+	}
 
 	public Etiqueta(String titulo) {
 		this.titulo = titulo;

@@ -2,6 +2,7 @@ package com.example.APITarefas.services;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,8 @@ import com.example.APITarefas.utils.Utils;
 
 @Service
 public class EtiquetaService {
-	
+
+	@Autowired
 	private EtiquetaRepository etiquetaRepository;
 
 	/**
@@ -25,11 +27,11 @@ public class EtiquetaService {
 	public Etiqueta buscaEtiqueta(Long id) {
 		validaIdEtiquetaInformado(id);
 		Optional<Etiqueta> optionalEtiqueta = this.etiquetaRepository.findById(id);
-		
+
 		if (optionalEtiqueta.isEmpty()) {
 			throw new ValidacaoException("Etiqueta não encontrada.", HttpStatus.NOT_FOUND);
 		}
-		
+
 		Etiqueta etiqueta = optionalEtiqueta.get();
 		return etiqueta;
 	}
@@ -56,6 +58,24 @@ public class EtiquetaService {
 		if (Utils.stringNulaVaziaOuEmBraco(tituloEtiqueta)) {
 			throw new ValidacaoException("O título da etiqueta não foi informado.", HttpStatus.BAD_REQUEST);
 		}
+		if (this.existeUmaEtiquetaComTituloInformado(tituloEtiqueta)) {
+			throw new ValidacaoException("Já existe uma etiqueta com o título informado.", HttpStatus.CONFLICT);
+		}
 		return this.etiquetaRepository.save(new Etiqueta(tituloEtiqueta));
+	}
+
+	/**
+	 * Verifica se já existe uma etiqueta com o título informado.
+	 * 
+	 * @param tituloEtiqueta
+	 * @return true se já existir uma etiqueta com o título informado e false se não
+	 *         existir uma etiqueta com o título informado.
+	 */
+	private boolean existeUmaEtiquetaComTituloInformado(String tituloEtiqueta) {
+		Etiqueta etiqueta = this.etiquetaRepository.findByTitulo(tituloEtiqueta);
+		if (etiqueta != null) {
+			return true;
+		}
+		return false;
 	}
 }

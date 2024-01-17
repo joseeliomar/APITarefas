@@ -1,5 +1,6 @@
 package com.example.APITarefas.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.APITarefas.entities.DiaSemanaPersonalizacaoNotificacao;
@@ -8,6 +9,7 @@ import com.example.APITarefas.repositories.DiaSemanaPersonalizacaoNotificacaoRep
 @Service
 public class DiaSemanaPersonalizacaoNotificacaoService {
 
+	@Autowired
 	private DiaSemanaPersonalizacaoNotificacaoRepository diaSemanaPersonalizacaoNotificacaoRepository;
 
 	/**
