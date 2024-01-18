@@ -47,8 +47,8 @@ public class ContaUsuarioService {
 	}
 
 	/**
-	 * Executa validações em comum que devem ser executadas na inserção e na
-	 * alteração de uma conta de usuário.
+	 * Executa validações que devem ser executadas na inserção e na alteração de uma
+	 * conta de usuário.
 	 * 
 	 * @param nomeUsuario
 	 * @param emailUsuario
@@ -81,6 +81,15 @@ public class ContaUsuarioService {
 		return false;
 	}
 	
+	/**
+	 * Verifica se já existe uma outra conta de usuário com o email informado.
+	 * 
+	 * @param emailUsuario
+	 * @param id
+	 * @return true se já existir uma outra conta de usuário com o email informado e
+	 *         false se não existir uma outra conta de usuário com o email
+	 *         informado.
+	 */
 	private boolean existeUmaOutraContaUsuarioComEmailInformado(String emailUsuario, Long id) {
 		ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmailAndIdNot(emailUsuario, id);
 		if (contaUsuario != null) {

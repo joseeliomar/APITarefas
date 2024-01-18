@@ -50,7 +50,7 @@ public class ContaUsuarioController {
 	public ResponseEntity<Page<ContaUsuario>> buscaContasUsuarios(Pageable pageable) {
 		Page<ContaUsuario> contasUsuarios = this.contaUsuarioService.buscaContasUsuarios(pageable);
 		if (contasUsuarios.isEmpty()) {
-			return ResponseEntity.noContent().build();
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(contasUsuarios);
 	}

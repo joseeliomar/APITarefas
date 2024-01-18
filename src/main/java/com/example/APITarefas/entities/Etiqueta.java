@@ -52,10 +52,6 @@ public class Etiqueta implements Serializable {
 		return tarefas;
 	}
 
-	public void setTarefas(List<Tarefa> tarefas) {
-		this.tarefas = tarefas;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

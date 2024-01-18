@@ -9,5 +9,7 @@ import com.example.APITarefas.entities.Etiqueta;
 public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long> {
 	
 	Etiqueta findByTitulo(String tituloEtiqueta);
+	
+	Etiqueta findByTituloAndIdNot(String tituloEtiqueta, Long id);
 
 }
