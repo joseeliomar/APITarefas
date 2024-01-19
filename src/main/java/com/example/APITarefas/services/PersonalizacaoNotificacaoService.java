@@ -18,10 +18,10 @@ import com.example.APITarefas.repositories.PersonalizacaoNotificacaoRepository;
 
 @Service
 public class PersonalizacaoNotificacaoService {
-	
+
 	@Autowired
 	private PersonalizacaoNotificacaoRepository personalizacaoNotificacaoRepository;
-	
+
 	@Autowired
 	private DiaSemanaPersonalizacaoNotificacaoService diaSemanaPersonalizacaoNotificacaoService;
 
@@ -31,7 +31,8 @@ public class PersonalizacaoNotificacaoService {
 	 * @param personalizacaoNotificacaoDto
 	 * @return a personalização da notificação inserida.
 	 */
-	public PersonalizacaoNotificacao inserePersonalizacaoNotificacao(PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto) {
+	public PersonalizacaoNotificacao inserePersonalizacaoNotificacao(
+			PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto) {
 		if (personalizacaoNotificacaoDto == null) {
 			throw new ValidacaoException(
 					"Os dados obrigatórios para a personalização da repetição da notificação da tarefa precisam ser informados.",
@@ -55,13 +56,12 @@ public class PersonalizacaoNotificacaoService {
 
 		int quantidade = personalizacaoNotificacaoDto.quantidade();
 		if (quantidade < 1) {
-			throw new ValidacaoException(contexto + ", a quantidade de "
-					+ medidaTempo.getPalavraPlural().toLowerCase() + " informada é inválida.",
-					HttpStatus.BAD_REQUEST);
+			throw new ValidacaoException(contexto + ", a quantidade de " + medidaTempo.getPalavraPlural().toLowerCase()
+					+ " informada é inválida.", HttpStatus.BAD_REQUEST);
 		}
 
 		ArrayList<DiaSemana> diasSemana = new ArrayList<>();
-		if (medidaTempo.equals(MedidaTempo.DIA)) {
+		if (medidaTempo.equals(MedidaTempo.SEMANA)) {
 			List<Integer> codigosDiasSemana = personalizacaoNotificacaoDto.codigosDiasSemana();
 			if (codigosDiasSemana == null 
 					|| codigosDiasSemana.stream().filter(c -> c != null).count() == 0) { // pode ser que venham itens nulos na lista
@@ -80,11 +80,11 @@ public class PersonalizacaoNotificacaoService {
 				diasSemana.add(diaSemana);
 			}
 		}
-		
+
 		PersonalizacaoNotificacao personalizacaoNotificacaoInserida = this.personalizacaoNotificacaoRepository
 				.save(new PersonalizacaoNotificacao(quantidade, medidaTempo));
 		insereDiasSemanaPersonalizacaoNotificacao(diasSemana, personalizacaoNotificacaoInserida);
-		
+
 		return personalizacaoNotificacaoInserida;
 	}
 
@@ -97,8 +97,11 @@ public class PersonalizacaoNotificacaoService {
 	private void insereDiasSemanaPersonalizacaoNotificacao(ArrayList<DiaSemana> diasSemana,
 			PersonalizacaoNotificacao personalizacaoNotificacao) {
 		for (DiaSemana diaSemana : diasSemana) {
-			diaSemanaPersonalizacaoNotificacaoService.insereDiaSemanaPersonalizacaoNotificacao(
-					new DiaSemanaPersonalizacaoNotificacao(personalizacaoNotificacao, diaSemana));
+			DiaSemanaPersonalizacaoNotificacao diaSemanaPersonalizacaoNotificacaoInserido = diaSemanaPersonalizacaoNotificacaoService
+					.insereDiaSemanaPersonalizacaoNotificacao(
+							new DiaSemanaPersonalizacaoNotificacao(personalizacaoNotificacao, diaSemana));
+			personalizacaoNotificacao.getDiasSemanaPersonalizacaoNotificacao()
+					.add(diaSemanaPersonalizacaoNotificacaoInserido);
 		}
 	}
 }

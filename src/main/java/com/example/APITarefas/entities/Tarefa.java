@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.example.APITarefas.enumerations.OpcaoRepeticaoNotificacao;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,6 +47,9 @@ public class Tarefa implements Serializable {
 	@JoinTable(name = "tb_tarefas_etiquetas", joinColumns = { @JoinColumn(name = "id_tarefa") }, inverseJoinColumns = {
 			@JoinColumn(name = "id_projeto") })
 	private List<Etiqueta> etiquetas = new ArrayList<>();
+	
+	public Tarefa() {
+	}
 
 	public Tarefa(ContaUsuario contaUsuario, String titulo, String descricao, LocalDateTime dataHoraCriacao,
 			LocalDateTime dataHoraAlteracao, LocalDateTime dataHoraNotificacao,

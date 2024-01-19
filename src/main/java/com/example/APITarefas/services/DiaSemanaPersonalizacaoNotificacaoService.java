@@ -18,10 +18,11 @@ public class DiaSemanaPersonalizacaoNotificacaoService {
 	 * insere esse relacionamento no banco de dados.
 	 * 
 	 * @param diaSemanaPersonalizacaoNotificacao
+	 * @return um dia da semana associado com a personalização da notificação.
 	 */
-	public void insereDiaSemanaPersonalizacaoNotificacao(
+	public DiaSemanaPersonalizacaoNotificacao insereDiaSemanaPersonalizacaoNotificacao(
 			DiaSemanaPersonalizacaoNotificacao diaSemanaPersonalizacaoNotificacao) {
-		this.diaSemanaPersonalizacaoNotificacaoRepository.save(diaSemanaPersonalizacaoNotificacao);
+		return this.diaSemanaPersonalizacaoNotificacaoRepository.save(diaSemanaPersonalizacaoNotificacao);
 	}
 
 }

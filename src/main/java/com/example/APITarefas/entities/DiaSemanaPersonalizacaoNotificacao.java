@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.example.APITarefas.enumerations.DiaSemana;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,6 +24,7 @@ public class DiaSemanaPersonalizacaoNotificacao implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@JoinColumn(name = "id_personalizacao_notificacao")
 	private PersonalizacaoNotificacao personalizacaoNotificacao;
 

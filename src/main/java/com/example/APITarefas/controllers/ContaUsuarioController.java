@@ -35,7 +35,8 @@ public class ContaUsuarioController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable(value = "id") Long id, @RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
+	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable(value = "id") Long id,
+			@RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuarioAlterada = this.contaUsuarioService.alteraContaUsuario(id, contaUsuarioRecordDto);
 		return ResponseEntity.ok(contaUsuarioAlterada);
 	}
