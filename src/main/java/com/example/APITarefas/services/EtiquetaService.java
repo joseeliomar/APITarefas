@@ -93,6 +93,13 @@ public class EtiquetaService {
 		return false;
 	}
 
+	/**
+	 * Altera uma etiqueta.
+	 * 
+	 * @param id
+	 * @param etiquetaDto
+	 * @return a etiqueta alterada.
+	 */
 	public Etiqueta alteraEtiqueta(Long id, EtiquetaDto etiquetaDto) {
 		Etiqueta etiqueta = buscaEtiqueta(id);
 		

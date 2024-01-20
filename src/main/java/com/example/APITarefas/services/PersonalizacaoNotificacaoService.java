@@ -2,6 +2,7 @@ package com.example.APITarefas.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class PersonalizacaoNotificacaoService {
 
 		return personalizacaoNotificacaoInserida;
 	}
-
+	
 	/**
 	 * Insere os dias da semana associados com a personalização da notificação.
 	 * 
@@ -97,11 +98,51 @@ public class PersonalizacaoNotificacaoService {
 	private void insereDiasSemanaPersonalizacaoNotificacao(ArrayList<DiaSemana> diasSemana,
 			PersonalizacaoNotificacao personalizacaoNotificacao) {
 		for (DiaSemana diaSemana : diasSemana) {
-			DiaSemanaPersonalizacaoNotificacao diaSemanaPersonalizacaoNotificacaoInserido = diaSemanaPersonalizacaoNotificacaoService
+			DiaSemanaPersonalizacaoNotificacao diaSemanaPersonalizacaoNotificacaoInserido = this.diaSemanaPersonalizacaoNotificacaoService
 					.insereDiaSemanaPersonalizacaoNotificacao(
 							new DiaSemanaPersonalizacaoNotificacao(personalizacaoNotificacao, diaSemana));
 			personalizacaoNotificacao.getDiasSemanaPersonalizacaoNotificacao()
 					.add(diaSemanaPersonalizacaoNotificacaoInserido);
+		}
+	}
+	
+	/**
+	 * Remove uma personalização de notificação pelo id informado.
+	 * 
+	 * @param id
+	 */
+	public void removePersonalizacaoNotificacao(Long id) {
+		PersonalizacaoNotificacao personalizacaoNotificacao = buscaPersonalizacaoNotificacao(id);
+		this.diaSemanaPersonalizacaoNotificacaoService
+				.removeDiasSemanaPersonalizacaoNotificacao(personalizacaoNotificacao);
+	}
+
+	/**
+	 * Busca uma personalização de notificação pelo id informado.
+	 * 
+	 * @param id
+	 * @return uma personalização de notificação.
+	 */
+	private PersonalizacaoNotificacao buscaPersonalizacaoNotificacao(Long id) {
+		validaIdPersonalizacaoNotificacaoInformado(id);
+		Optional<PersonalizacaoNotificacao> optionalPersonalizacaoNotificacao = this.personalizacaoNotificacaoRepository.findById(id);
+		
+		if (optionalPersonalizacaoNotificacao.isEmpty()) {
+			throw new ValidacaoException("Personalização de notificação não encontrada.", HttpStatus.NOT_FOUND);
+		}
+		
+		PersonalizacaoNotificacao personalizacaoNotificacao = optionalPersonalizacaoNotificacao.get();
+		return personalizacaoNotificacao;
+	}
+
+	/**
+	 * Valida se o código da personalização de notificação não foi informado.
+	 * @param id
+	 */
+	private void validaIdPersonalizacaoNotificacaoInformado(Long id) {
+		if (id == null) {
+			throw new ValidacaoException("O código da personalização de notificação não foi informado.",
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 }

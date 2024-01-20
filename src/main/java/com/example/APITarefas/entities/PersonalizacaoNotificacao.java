@@ -31,10 +31,21 @@ public class PersonalizacaoNotificacao implements Serializable {
 
 	@OneToMany(mappedBy = "personalizacaoNotificacao")
 	private List<DiaSemanaPersonalizacaoNotificacao> diasSemanaPersonalizacaoNotificacao = new ArrayList<>();
+	
+	public PersonalizacaoNotificacao() {
+	}
 
 	public PersonalizacaoNotificacao(int quantidade, MedidaTempo medidaTempo) {
 		this.quantidade = quantidade;
 		this.medidaTempo = medidaTempo;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public int getQuantidade() {

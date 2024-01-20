@@ -3,8 +3,11 @@ package com.example.APITarefas.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +30,10 @@ public class TarefaService {
 
 	@Autowired
 	private ContaUsuarioService contaUsuarioService;
-	
+
 	@Autowired
 	private EtiquetaService etiquetaService;
-	
+
 	@Autowired
 	private PersonalizacaoNotificacaoService personalizacaoNotificacaoService;
 
@@ -41,6 +44,21 @@ public class TarefaService {
 	 * @return a tarefa inserida.
 	 */
 	public Tarefa insereTarefa(TarefaRecordDto tarefaRecordDto) {
+		Tarefa tarefaInserida = salvaTarefa(tarefaRecordDto, null);
+		return tarefaInserida;
+	}
+
+	/**
+	 * Salva uma tarefa. Para esse método pode ser passada a tarefa a ser alterada,
+	 * porém caso queira inserir uma tarefa ao invés de alterar alguma tarefa, não
+	 * informe alguma tarefa e assim será criada uma nova tarefa com os dados
+	 * informados.
+	 * 
+	 * @param tarefaRecordDto
+	 * @param tarefaSerAlterada a tarefa a ser alterada.
+	 * @return a tarefa salva.
+	 */
+	private Tarefa salvaTarefa(TarefaRecordDto tarefaRecordDto, Tarefa tarefaSerAlterada) {
 		Long idContaUsuario = tarefaRecordDto.idContaUsuario();
 		String tituloTarefa = tarefaRecordDto.titulo();
 		String descricaoTarefa = tarefaRecordDto.descricao();
@@ -71,7 +89,7 @@ public class TarefaService {
 			personalizacaoNotificacaoInserida = this.personalizacaoNotificacaoService
 					.inserePersonalizacaoNotificacao(personalizacaoNotificacaoDto);
 		}
-		
+
 		ArrayList<Etiqueta> etiquetas = new ArrayList<>();
 		List<Long> codigosEtiquetas = tarefaRecordDto.codigosEtiquetas();
 		for (Long codigoEtiqueta : codigosEtiquetas) {
@@ -79,9 +97,86 @@ public class TarefaService {
 			etiquetas.add(etiqueta);
 		}
 
-		Tarefa tarefa = new Tarefa(contaUsuario, tituloTarefa, descricaoTarefa, LocalDateTime.now(), null,
-				dataHoraNotificacaoTarefa, opcaoRepeticaoNotificacao, personalizacaoNotificacaoInserida, etiquetas);
-		return this.tarefaRepository.save(tarefa);
+		if (tarefaSerAlterada != null) {
+			tarefaSerAlterada.setContaUsuario(contaUsuario);
+			tarefaSerAlterada.setTitulo(tituloTarefa);
+			tarefaSerAlterada.setDescricao(descricaoTarefa);
+			tarefaSerAlterada.setDataHoraAlteracao(LocalDateTime.now());
+			tarefaSerAlterada.setDataHoraNotificacao(dataHoraNotificacaoTarefa);
+			tarefaSerAlterada.setOpcaoRepeticaoNotificacao(opcaoRepeticaoNotificacao);
+			tarefaSerAlterada.setPersonalizacaoNotificacao(personalizacaoNotificacaoInserida);
+			tarefaSerAlterada.setEtiquetas(etiquetas);
+			return this.tarefaRepository.save(tarefaSerAlterada);
+		} else {
+			Tarefa tarefa = new Tarefa(contaUsuario, tituloTarefa, descricaoTarefa, LocalDateTime.now(), null,
+					dataHoraNotificacaoTarefa, opcaoRepeticaoNotificacao, personalizacaoNotificacaoInserida, etiquetas);
+			return this.tarefaRepository.save(tarefa);
+		}
+	}
+
+	/**
+	 * Busca tarefa pelo id informado.
+	 * 
+	 * @param id
+	 * @return a tarefa correspondente ao id informado.
+	 */
+	public Tarefa buscaTarefa(Long id) {
+		validaIdTarefaInformado(id);
+		Optional<Tarefa> optionalTarefa = this.tarefaRepository.findById(id);
+
+		if (optionalTarefa.isEmpty()) {
+			throw new ValidacaoException("Tarefa não encontrada.", HttpStatus.NOT_FOUND);
+		}
+
+		Tarefa tarefa = optionalTarefa.get();
+		return tarefa;
+	}
+
+	/**
+	 * Valida se o código da tarefa não foi informado.
+	 * 
+	 * @param id
+	 */
+	private void validaIdTarefaInformado(Long id) {
+		if (id == null) {
+			throw new ValidacaoException("O código da tarefa não foi informado.", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Busca tarefas.
+	 * 
+	 * @param pageable
+	 * @return tarefas.
+	 */
+	public Page<Tarefa> buscaTarefas(Pageable pageable) {
+		Page<Tarefa> tarefas = this.tarefaRepository.findAll(pageable);
+		return tarefas;
+	}
+
+	/**
+	 * Remove uma tarefa pelo id informado.
+	 * 
+	 * @param id
+	 */
+	public void removeTarefa(Long id) {
+		Tarefa tarefa = this.buscaTarefa(id);
+		this.tarefaRepository.delete(tarefa);
+	}
+
+	/**
+	 * Altera uma tarefa.
+	 * 
+	 * @param id
+	 * @param tarefaRecordDto
+	 * @return a tarefa alterada.
+	 */
+	public Tarefa alteraTarefa(Long id, TarefaRecordDto tarefaRecordDto) {
+		Tarefa tarefa = buscaTarefa(id);
+		Long idPersonalizacaoNotificacaoTarefa = tarefa.getPersonalizacaoNotificacao().getId();
+		this.personalizacaoNotificacaoService.removePersonalizacaoNotificacao(idPersonalizacaoNotificacaoTarefa);
+		Tarefa tarefaAlterada = salvaTarefa(tarefaRecordDto, tarefa);
+		return tarefaAlterada;
 	}
 
 }
