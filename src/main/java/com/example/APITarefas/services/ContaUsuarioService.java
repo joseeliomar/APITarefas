@@ -1,22 +1,27 @@
 package com.example.APITarefas.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.APITarefas.dtos.ContaUsuarioRecordDto;
 import com.example.APITarefas.entities.ContaUsuario;
+import com.example.APITarefas.enumerations.PapelUsuario;
 import com.example.APITarefas.exceptions.ValidacaoException;
 import com.example.APITarefas.repositories.ContaUsuarioRepository;
 import com.example.APITarefas.utils.Utils;
 
 @Service
-public class ContaUsuarioService {
+public class ContaUsuarioService implements UserDetailsService {
 
 	@Autowired
 	private ContaUsuarioRepository contaUsuarioRepository;
@@ -31,6 +36,7 @@ public class ContaUsuarioService {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
 		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
+		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario(); // TODO Salvar os papéis do usuário no banco de dados.
 
 		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
 
@@ -41,7 +47,7 @@ public class ContaUsuarioService {
 		String senhaContaCriptografada = Utils.criptografaString(senhaConta);
 
 		ContaUsuario contaUsuario = new ContaUsuario(nomeUsuario, emailUsuario, LocalDateTime.now(), null,
-				senhaContaCriptografada);
+				senhaContaCriptografada, null);
 		
 		return this.contaUsuarioRepository.save(contaUsuario);
 	}
@@ -58,11 +64,20 @@ public class ContaUsuarioService {
 		if (Utils.stringNulaVaziaOuEmBraco(nomeUsuario)) {
 			throw new ValidacaoException("O nome do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
-		if (Utils.stringNulaVaziaOuEmBraco(emailUsuario)) {
-			throw new ValidacaoException("O e-mail não foi informado.", HttpStatus.BAD_REQUEST);
-		}
+		validaEmailInformado(emailUsuario);
 		if (Utils.stringNulaVaziaOuEmBraco(senhaConta)) {
 			throw new ValidacaoException("A senha não foi informada.", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 *  Valida se o e-mail da conta do usuário não foi informado.
+	 *  
+	 * @param emailUsuario
+	 */
+	private void validaEmailInformado(String emailUsuario) {
+		if (Utils.stringNulaVaziaOuEmBraco(emailUsuario)) {
+			throw new ValidacaoException("O e-mail não foi informado.", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -176,6 +191,28 @@ public class ContaUsuarioService {
 		if (id == null) {
 			throw new ValidacaoException("O código da conta do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	/**
+	 * Busca conta de usuário pelo e-mail informado.
+	 * 
+	 * @param email
+	 * @return a conta de usuário correspondente ao e-mail informado
+	 */
+	private ContaUsuario findByEmail(String email) {
+		validaEmailInformado(email);
+		ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmail(email);
+		
+		if (contaUsuario == null) {
+			throw new ValidacaoException("Conta de usuário não encontrada.", HttpStatus.NOT_FOUND);
+		}
+		
+		return contaUsuario;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return findByEmail(username);
 	}
 
 }
