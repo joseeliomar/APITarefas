@@ -35,14 +35,14 @@ public class EtiquetaController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Etiqueta> alteraEtiqueta(@PathVariable(value = "id") Long id,
+	public ResponseEntity<Etiqueta> alteraEtiqueta(@PathVariable Long id,
 			@RequestBody EtiquetaDto etiquetaDto) {
 		Etiqueta etiquetaAlterada = this.etiquetaService.alteraEtiqueta(id, etiquetaDto);
 		return ResponseEntity.ok(etiquetaAlterada);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Etiqueta> buscaEtiqueta(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<Etiqueta> buscaEtiqueta(@PathVariable Long id) {
 		Etiqueta etiqueta = this.etiquetaService.buscaEtiqueta(id);
 		return ResponseEntity.ok(etiqueta);
 	}
@@ -57,7 +57,7 @@ public class EtiquetaController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> removeEtiqueta(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> removeEtiqueta(@PathVariable Long id) {
 		this.etiquetaService.removeEtiqueta(id);
 		return ResponseEntity.noContent().build();
 	}

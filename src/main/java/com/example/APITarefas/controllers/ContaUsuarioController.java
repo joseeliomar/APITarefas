@@ -35,14 +35,14 @@ public class ContaUsuarioController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable(value = "id") Long id,
+	public ResponseEntity<ContaUsuario> alteraContaUsuario(@PathVariable Long id,
 			@RequestBody ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		ContaUsuario contaUsuarioAlterada = this.contaUsuarioService.alteraContaUsuario(id, contaUsuarioRecordDto);
 		return ResponseEntity.ok(contaUsuarioAlterada);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ContaUsuario> buscaContaUsuario(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<ContaUsuario> buscaContaUsuario(@PathVariable Long id) {
 		ContaUsuario contaUsuario = this.contaUsuarioService.buscaContaUsuario(id);
 		return ResponseEntity.ok(contaUsuario);
 	}
@@ -57,7 +57,7 @@ public class ContaUsuarioController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> removeContaUsuario(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> removeContaUsuario(@PathVariable Long id) {
 		this.contaUsuarioService.removeContaUsuario(id);
 		return ResponseEntity.noContent().build();
 	}

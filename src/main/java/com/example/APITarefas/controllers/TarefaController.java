@@ -35,14 +35,14 @@ public class TarefaController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Tarefa> alteraTarefa(@PathVariable(value = "id") Long id,
+	public ResponseEntity<Tarefa> alteraTarefa(@PathVariable Long id,
 			@RequestBody TarefaRecordDto tarefaRecordDto) {
 		Tarefa tarefaAlterada = this.tarefaService.alteraTarefa(id, tarefaRecordDto);
 		return ResponseEntity.ok(tarefaAlterada);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Tarefa> buscaTarefa(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<Tarefa> buscaTarefa(@PathVariable Long id) {
 		Tarefa tarefa = this.tarefaService.buscaTarefa(id);
 		return ResponseEntity.ok(tarefa);
 	}
@@ -57,7 +57,7 @@ public class TarefaController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> removeTarefa(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> removeTarefa(@PathVariable Long id) {
 		this.tarefaService.removeTarefa(id);
 		return ResponseEntity.noContent().build();
 	}
