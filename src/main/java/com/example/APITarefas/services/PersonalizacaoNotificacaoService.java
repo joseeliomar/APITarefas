@@ -42,16 +42,9 @@ public class PersonalizacaoNotificacaoService {
 
 		String contexto = "Em relação a personalização da repetição da notificação da tarefa";
 
-		if (personalizacaoNotificacaoDto.codigoMedidaTempo() == null) {
-			throw new ValidacaoException("A medida de tempo não foi informada.", HttpStatus.BAD_REQUEST);
-		}
-
-		Integer codigoMedidaTempo = personalizacaoNotificacaoDto.codigoMedidaTempo();
-		MedidaTempo medidaTempo = MedidaTempo.obterOpcaoPorCodigo(codigoMedidaTempo);
+		MedidaTempo medidaTempo = personalizacaoNotificacaoDto.medidaTempo();
 		if (medidaTempo == null) {
-			throw new ValidacaoException(
-					contexto + ", a medida de tempo informada é inválida. Código de medida de tempo informado: "
-							+ codigoMedidaTempo + ".",
+			throw new ValidacaoException(contexto + ", a medida de tempo não foi informada.",
 					HttpStatus.BAD_REQUEST);
 		}
 
@@ -61,29 +54,21 @@ public class PersonalizacaoNotificacaoService {
 					+ " informada é inválida.", HttpStatus.BAD_REQUEST);
 		}
 
-		ArrayList<DiaSemana> diasSemana = new ArrayList<>();
+		List<DiaSemana> diasSemana = new ArrayList<>();
 		if (medidaTempo.equals(MedidaTempo.SEMANA)) {
-			List<Integer> codigosDiasSemana = personalizacaoNotificacaoDto.codigosDiasSemana();
-			if (codigosDiasSemana == null 
-					|| codigosDiasSemana.stream().filter(c -> c != null).count() == 0) { // pode ser que venham itens nulos na lista
+			diasSemana = personalizacaoNotificacaoDto.diasSemana();
+			if (diasSemana == null 
+					|| diasSemana.stream().filter(c -> c != null).count() == 0) { // pode ser que venham itens nulos na lista
 				throw new ValidacaoException(contexto + ", os dias da semana não foram informados.",
 						HttpStatus.BAD_REQUEST);
 			}
 
-			codigosDiasSemana = codigosDiasSemana.stream().filter(c -> c != null).collect(Collectors.toList());
-			for (Integer codigoDiaSemana : codigosDiasSemana) {
-				DiaSemana diaSemana = DiaSemana.obterOpcaoPorCodigo(codigoDiaSemana);
-				if (diaSemana == null) {
-					throw new ValidacaoException(contexto
-							+ ", foi encontrado entre os dias informados, um dia da semana inválido. Código de dia da semana informado: "
-							+ codigoDiaSemana + ".", HttpStatus.BAD_REQUEST);
-				}
-				diasSemana.add(diaSemana);
-			}
+			diasSemana = diasSemana.stream().filter(c -> c != null).collect(Collectors.toList());
 		}
 
 		PersonalizacaoNotificacao personalizacaoNotificacaoInserida = this.personalizacaoNotificacaoRepository
 				.save(new PersonalizacaoNotificacao(quantidade, medidaTempo));
+		
 		insereDiasSemanaPersonalizacaoNotificacao(diasSemana, personalizacaoNotificacaoInserida);
 
 		return personalizacaoNotificacaoInserida;
@@ -95,7 +80,7 @@ public class PersonalizacaoNotificacaoService {
 	 * @param diasSemana
 	 * @param personalizacaoNotificacao
 	 */
-	private void insereDiasSemanaPersonalizacaoNotificacao(ArrayList<DiaSemana> diasSemana,
+	private void insereDiasSemanaPersonalizacaoNotificacao(List<DiaSemana> diasSemana,
 			PersonalizacaoNotificacao personalizacaoNotificacao) {
 		for (DiaSemana diaSemana : diasSemana) {
 			DiaSemanaPersonalizacaoNotificacao diaSemanaPersonalizacaoNotificacaoInserido = this.diaSemanaPersonalizacaoNotificacaoService

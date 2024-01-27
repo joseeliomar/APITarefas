@@ -64,9 +64,7 @@ public class TarefaService {
 		String descricaoTarefa = tarefaRecordDto.descricao();
 		LocalDateTime dataHoraNotificacaoTarefa = tarefaRecordDto.dataHoraNotificacao();
 
-		int codigoOpcaoRepeticaoNotificacao = tarefaRecordDto.codigoOpcaoRepeticaoNotificacao();
-		OpcaoRepeticaoNotificacao opcaoRepeticaoNotificacao = OpcaoRepeticaoNotificacao
-				.obterOpcaoPorCodigo(codigoOpcaoRepeticaoNotificacao);
+		OpcaoRepeticaoNotificacao opcaoRepeticaoNotificacao = tarefaRecordDto.opcaoRepeticaoNotificacao();
 
 		PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto = tarefaRecordDto.personalizacaoNotificacaoDto();
 

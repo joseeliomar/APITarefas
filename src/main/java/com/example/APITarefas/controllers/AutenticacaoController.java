@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.APITarefas.dtos.TokenRespostaDTO;
+import com.example.APITarefas.dtos.DadosAutenticacaoDto;
+import com.example.APITarefas.dtos.TokenRespostaDto;
 import com.example.APITarefas.entities.ContaUsuario;
 import com.example.APITarefas.services.TokenService;
 
@@ -30,6 +31,6 @@ public class AutenticacaoController {
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(dadosAutenticacao.email(), dadosAutenticacao.senha());
 		Authentication authentication = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 		String tokenGerado = this.tokenService.geraToken((ContaUsuario) authentication.getPrincipal());
-		return ResponseEntity.ok(new TokenRespostaDTO(tokenGerado));
+		return ResponseEntity.ok(new TokenRespostaDto(tokenGerado));
 	}
 }

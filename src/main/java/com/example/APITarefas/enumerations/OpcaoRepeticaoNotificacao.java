@@ -16,15 +16,6 @@ public enum OpcaoRepeticaoNotificacao {
 		this.descricao = descricao;
 	}
 	
-	public static OpcaoRepeticaoNotificacao obterOpcaoPorCodigo(int codigo) {
-		for (OpcaoRepeticaoNotificacao opcao: OpcaoRepeticaoNotificacao.values()) {
-			if (opcao.codigo == codigo) {
-				return opcao;
-			}
-		}
-		return null;
-	}
-
 	public int getCodigo() {
 		return codigo;
 	}

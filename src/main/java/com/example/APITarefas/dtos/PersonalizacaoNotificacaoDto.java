@@ -2,6 +2,9 @@ package com.example.APITarefas.dtos;
 
 import java.util.List;
 
-public record PersonalizacaoNotificacaoDto(int quantidade, Integer codigoMedidaTempo, List<Integer> codigosDiasSemana) {
+import com.example.APITarefas.enumerations.DiaSemana;
+import com.example.APITarefas.enumerations.MedidaTempo;
+
+public record PersonalizacaoNotificacaoDto(int quantidade, MedidaTempo medidaTempo, List<DiaSemana> diasSemana) {
 
 }
