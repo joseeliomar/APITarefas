@@ -144,10 +144,6 @@ public class Tarefa implements Serializable {
 		return etiquetas;
 	}
 
-	public void setEtiquetas(List<Etiqueta> etiquetas) {
-		this.etiquetas = etiquetas;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

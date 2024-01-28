@@ -108,6 +108,10 @@ public class ContaUsuario implements UserDetails, Serializable {
 		return this.papeis;
 	}
 
+	public List<Papel> getPapeis() {
+		return papeis;
+	}
+
 	@Override
 	public String getPassword() {
 		return this.senha;

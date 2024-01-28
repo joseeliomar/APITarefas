@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.APITarefas.entities.ContaUsuario;
-import com.example.APITarefas.exceptions.ValidacaoException;
+import com.example.APITarefas.exceptions.AlgoritmoException;
+import com.example.APITarefas.exceptions.TokenException;
 
 @Service
 public class TokenService {
@@ -39,7 +40,7 @@ public class TokenService {
 			
 			return tokenGerado;
 		} catch (Exception exception) {
-			throw new ValidacaoException(
+			throw new TokenException(
 					"Erro ao tentar gerar um token. Mensagem de erro: " + exception.getMessage(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -74,9 +75,9 @@ public class TokenService {
 		try {
 			Algorithm algorithm = Algorithm.HMAC256(this.secret);
 			return algorithm;
-		} catch (IllegalArgumentException illegalArgumentException) {
-			throw new ValidacaoException("Erro ao tentar gerar um algoritmo usando HmacSHA256. Mensagem de erro: "
-					+ illegalArgumentException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception exception) {
+			throw new AlgoritmoException("Erro ao tentar gerar um algoritmo usando HmacSHA256. Mensagem de erro: "
+					+ exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

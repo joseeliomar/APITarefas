@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.example.APITarefas.dtos.DetalhesExcecaoRecordDto;
-import com.example.APITarefas.exceptions.ValidacaoException;
+import com.example.APITarefas.exceptions.ExcecaoComStatusHttp;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -16,14 +16,14 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ManipuladorExcecoes {
 
 	/**
-	 * Captura as exceções do tipo ValidacaoException e retorna detalhes da exceção.
+	 * Captura as exceções do tipo ExcecaoComStatusHttp e retorna detalhes da exceção.
 	 * 
 	 * @param excecao
 	 * @param httpServletRequest
 	 * @return detalhes da exceção.
 	 */
-	@ExceptionHandler(ValidacaoException.class)
-	public ResponseEntity<DetalhesExcecaoRecordDto> validacao(ValidacaoException excecao,
+	@ExceptionHandler(value = {ExcecaoComStatusHttp.class})
+	public ResponseEntity<DetalhesExcecaoRecordDto> respostaTratada(ExcecaoComStatusHttp excecao,
 			HttpServletRequest httpServletRequest) {
 		HttpStatus httpStatus = excecao.getHttpStatus();
 

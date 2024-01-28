@@ -1,6 +1,7 @@
 package com.example.APITarefas.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.APITarefas.dtos.ContaUsuarioRecordDto;
 import com.example.APITarefas.entities.ContaUsuario;
+import com.example.APITarefas.entities.Papel;
 import com.example.APITarefas.enumerations.PapelUsuario;
 import com.example.APITarefas.exceptions.ValidacaoException;
 import com.example.APITarefas.repositories.ContaUsuarioRepository;
@@ -25,6 +27,9 @@ public class ContaUsuarioService implements UserDetailsService {
 
 	@Autowired
 	private ContaUsuarioRepository contaUsuarioRepository;
+	
+	@Autowired
+	private PapelService papelService;
 
 	/**
 	 * Insere uma conta de usuário.
@@ -36,7 +41,7 @@ public class ContaUsuarioService implements UserDetailsService {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
 		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
-		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario(); // TODO Salvar os papéis do usuário no banco de dados.
+		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario();
 
 		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
 
@@ -45,11 +50,32 @@ public class ContaUsuarioService implements UserDetailsService {
 		}
 
 		String senhaContaCriptografada = Utils.criptografaString(senhaConta);
-
+		
+		List<Papel> papeisUsuarioInseridos = inserePapeisUsuario(papeisUsuario);
+		
 		ContaUsuario contaUsuario = new ContaUsuario(nomeUsuario, emailUsuario, LocalDateTime.now(), null,
-				senhaContaCriptografada, null);
+				senhaContaCriptografada, papeisUsuarioInseridos);
 		
 		return this.contaUsuarioRepository.save(contaUsuario);
+	}
+	
+	/**
+	 * Insere os papeis do usuário.
+	 * 
+	 * @param papeisUsuario
+	 * @return os papeis do usuário que foram inseridos.
+	 */
+	private List<Papel> inserePapeisUsuario(List<PapelUsuario> papeisUsuario) {
+		List<Papel> papeis = new ArrayList<>();
+		
+		if (papeisUsuario != null) {
+			for (PapelUsuario papelUsuario : papeisUsuario) {
+				Papel papelInserido = this.papelService.inserePapel(papelUsuario);
+				papeis.add(papelInserido);
+			}
+		}
+		
+		return papeis;
 	}
 
 	/**
@@ -126,6 +152,7 @@ public class ContaUsuarioService implements UserDetailsService {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
 		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
+		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario();
 		
 		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
 		
@@ -140,6 +167,11 @@ public class ContaUsuarioService implements UserDetailsService {
 		contaUsuario.setSenha(senhaContaCriptografada);
 		
 		contaUsuario.setDataHoraAlteracao(LocalDateTime.now());
+		
+		List<Papel> papeisContaUsuario = contaUsuario.getPapeis();
+		papeisContaUsuario.clear();
+		List<Papel> papeisUsuarioInseridos = inserePapeisUsuario(papeisUsuario);
+		papeisContaUsuario.addAll(papeisUsuarioInseridos);
 
 		return this.contaUsuarioRepository.save(contaUsuario);
 	}

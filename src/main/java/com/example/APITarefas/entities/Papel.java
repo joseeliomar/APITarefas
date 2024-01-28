@@ -26,6 +26,14 @@ public class Papel implements GrantedAuthority {
 	@Enumerated(EnumType.STRING)
 	private PapelUsuario papelUsuario;
 
+	public Papel() {
+	}
+
+	public Papel(PapelUsuario papelUsuario) {
+		super();
+		this.papelUsuario = papelUsuario;
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -103,7 +103,9 @@ public class TarefaService {
 			tarefaSerAlterada.setDataHoraNotificacao(dataHoraNotificacaoTarefa);
 			tarefaSerAlterada.setOpcaoRepeticaoNotificacao(opcaoRepeticaoNotificacao);
 			tarefaSerAlterada.setPersonalizacaoNotificacao(personalizacaoNotificacaoInserida);
-			tarefaSerAlterada.setEtiquetas(etiquetas);
+			List<Etiqueta> etiquetasTarefa = tarefaSerAlterada.getEtiquetas();
+			etiquetasTarefa.clear();
+			etiquetasTarefa.addAll(etiquetas); 
 			return this.tarefaRepository.save(tarefaSerAlterada);
 		} else {
 			Tarefa tarefa = new Tarefa(contaUsuario, tituloTarefa, descricaoTarefa, LocalDateTime.now(), null,
