@@ -1,6 +1,8 @@
 package com.example.APITarefas.controllers;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.APITarefas.dtos.EtiquetaDto;
+import com.example.APITarefas.dtos.EtiquetaDtoResposta;
 import com.example.APITarefas.entities.Etiqueta;
 import com.example.APITarefas.services.EtiquetaService;
 import com.example.APITarefas.utils.Utils;
@@ -28,32 +31,39 @@ public class EtiquetaController {
 	private EtiquetaService etiquetaService;
 
 	@PostMapping
-	public ResponseEntity<Etiqueta> insereEtiqueta(@RequestBody EtiquetaDto etiquetaDto) {
+	public ResponseEntity<EtiquetaDtoResposta> insereEtiqueta(@RequestBody EtiquetaDto etiquetaDto) {
 		Etiqueta etiquetaInserida = this.etiquetaService.insereEtiqueta(etiquetaDto);
+		EtiquetaDtoResposta etiquetaDtoResposta = new EtiquetaDtoResposta(etiquetaInserida);
 		URI localizacaoRecursoCriado = Utils.obtemLocalizacaoRecursoCriado(etiquetaInserida.getId());
-		return ResponseEntity.created(localizacaoRecursoCriado).body(etiquetaInserida);
+		return ResponseEntity.created(localizacaoRecursoCriado).body(etiquetaDtoResposta);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Etiqueta> alteraEtiqueta(@PathVariable Long id,
+	public ResponseEntity<EtiquetaDtoResposta> alteraEtiqueta(@PathVariable Long id,
 			@RequestBody EtiquetaDto etiquetaDto) {
 		Etiqueta etiquetaAlterada = this.etiquetaService.alteraEtiqueta(id, etiquetaDto);
-		return ResponseEntity.ok(etiquetaAlterada);
+		EtiquetaDtoResposta etiquetaDtoResposta = new EtiquetaDtoResposta(etiquetaAlterada);
+		return ResponseEntity.ok(etiquetaDtoResposta);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Etiqueta> buscaEtiqueta(@PathVariable Long id) {
+	public ResponseEntity<EtiquetaDtoResposta> buscaEtiqueta(@PathVariable Long id) {
 		Etiqueta etiqueta = this.etiquetaService.buscaEtiqueta(id);
-		return ResponseEntity.ok(etiqueta);
+		EtiquetaDtoResposta etiquetaDtoResposta = new EtiquetaDtoResposta(etiqueta);
+		return ResponseEntity.ok(etiquetaDtoResposta);
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<Etiqueta>> buscaEtiquetas(Pageable pageable) {
+	public ResponseEntity<Page<EtiquetaDtoResposta>> buscaEtiquetas(Pageable pageable) {
 		Page<Etiqueta> etiquetas = this.etiquetaService.buscaEtiquetas(pageable);
+		
 		if (etiquetas.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(etiquetas);
+		
+		Page<EtiquetaDtoResposta> etiquetasDtoResposta = etiquetas.map(e -> new EtiquetaDtoResposta(e));
+		
+		return ResponseEntity.ok(etiquetasDtoResposta);
 	}
 	
 	@DeleteMapping("/{id}")
