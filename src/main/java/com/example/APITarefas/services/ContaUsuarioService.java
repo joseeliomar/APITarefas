@@ -103,7 +103,7 @@ public class ContaUsuarioService implements UserDetailsService {
 	 */
 	private void validaEmailInformado(String emailUsuario) {
 		if (Utils.stringNulaVaziaOuEmBraco(emailUsuario)) {
-			throw new ValidacaoException("O e-mail não foi informado.", HttpStatus.BAD_REQUEST);
+			throw new ValidacaoException("O e-mail do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -146,11 +146,10 @@ public class ContaUsuarioService implements UserDetailsService {
 	 * @param contaUsuarioRecordDto
 	 * @return a conta alterada.
 	 */
-	public ContaUsuario alteraContaUsuario(Long id, ContaUsuarioRecordDto contaUsuarioRecordDto) {
-		ContaUsuario contaUsuario = buscaContaUsuario(id);
+	public ContaUsuario alteraContaUsuario(String emailUsuario, Long id, ContaUsuarioRecordDto contaUsuarioRecordDto) {
+		ContaUsuario contaUsuario = buscaContaUsuario(emailUsuario);
 		
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
-		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
 		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario();
 		
@@ -177,20 +176,19 @@ public class ContaUsuarioService implements UserDetailsService {
 	}
 
 	/**
-	 * Busca conta de usuário pelo id informado.
+	 * Busca conta de usuário pelo e-mail informado.
 	 * 
 	 * @param id
 	 * @return a conta de usuário correspondente ao id informado.
 	 */
-	public ContaUsuario buscaContaUsuario(Long id) {
-		validaIdContaUsuarioInformado(id);
-		Optional<ContaUsuario> optionalContaUsuario = this.contaUsuarioRepository.findById(id);
+	public ContaUsuario buscaContaUsuario(String email) {
+		validaEmailInformado(email);
+		ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmail(email);
 		
-		if (optionalContaUsuario.isEmpty()) {
+		if (contaUsuario != null) {
 			throw new ValidacaoException("Conta de usuário não encontrada.", HttpStatus.NOT_FOUND);
 		}
 		
-		ContaUsuario contaUsuario = optionalContaUsuario.get();
 		return contaUsuario;
 	}
 
@@ -209,22 +207,11 @@ public class ContaUsuarioService implements UserDetailsService {
 	 * 
 	 * @param id
 	 */
-	public void removeContaUsuario(Long id) {
-		ContaUsuario contaUsuario = this.buscaContaUsuario(id);
+	public void removeContaUsuario(String email) {
+		ContaUsuario contaUsuario = this.buscaContaUsuario(email);
 		this.contaUsuarioRepository.delete(contaUsuario);
 	}
 
-	/**
-	 * Valida se o código da conta do usuário não foi informado.
-	 * 
-	 * @param id
-	 */
-	public void validaIdContaUsuarioInformado(Long id) {
-		if (id == null) {
-			throw new ValidacaoException("O código da conta do usuário não foi informado.", HttpStatus.BAD_REQUEST);
-		}
-	}
-	
 	/**
 	 * Busca conta de usuário pelo e-mail informado.
 	 * 
