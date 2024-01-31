@@ -35,7 +35,7 @@ public class TokenService {
 			String tokenGerado = JWT.create()
 					.withIssuer(EMISSOR_TOKEN)
 					.withSubject(contaUsuario.getEmail())
-					.withExpiresAt(geraDataExpiracao())
+					.withExpiresAt(geraInstanteExpiracao())
 					.sign(algoritmoGerado);
 			
 			return tokenGerado;
@@ -82,11 +82,11 @@ public class TokenService {
 	}
 
 	/**
-	 * Gera a data de expiração.
+	 * Gera o instante (momento) da expiração.
 	 * 
-	 * @return a data de expiração gerada.
+	 * @return o instante (momento) da expiração.
 	 */
-	private Instant geraDataExpiracao() {
+	private Instant geraInstanteExpiracao() {
 		return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
 	}
 }

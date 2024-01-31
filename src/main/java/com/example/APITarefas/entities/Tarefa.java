@@ -61,9 +61,7 @@ public class Tarefa implements Serializable {
 		this.dataHoraNotificacao = dataHoraNotificacao;
 		this.opcaoRepeticaoNotificacao = opcaoRepeticaoNotificacao;
 		this.personalizacaoNotificacao = personalizacaoNotificacao;
-		if (etiquetas == null) {
-			this.etiquetas = new ArrayList<>();
-		} else {
+		if (etiquetas != null) {
 			this.etiquetas = etiquetas;
 		}
 	}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.APITarefas.dtos.TarefaDtoResposta;
 import com.example.APITarefas.dtos.TarefaRecordDto;
 import com.example.APITarefas.entities.Tarefa;
 import com.example.APITarefas.services.TarefaService;
@@ -28,32 +29,38 @@ public class TarefaController {
 	private TarefaService tarefaService;
 
 	@PostMapping
-	public ResponseEntity<Tarefa> insereTarefa(@RequestBody TarefaRecordDto tarefaRecordDto) {
+	public ResponseEntity<TarefaDtoResposta> insereTarefa(@RequestBody TarefaRecordDto tarefaRecordDto) {
 		Tarefa tarefaInserida = this.tarefaService.insereTarefa(tarefaRecordDto);
+		TarefaDtoResposta tarefaDtoResposta = new TarefaDtoResposta(tarefaInserida);
 		URI localizacaoRecursoCriado = Utils.obtemLocalizacaoRecursoCriado(tarefaInserida.getId());
-		return ResponseEntity.created(localizacaoRecursoCriado).body(tarefaInserida);
+		return ResponseEntity.created(localizacaoRecursoCriado).body(tarefaDtoResposta);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Tarefa> alteraTarefa(@PathVariable Long id,
+	public ResponseEntity<TarefaDtoResposta> alteraTarefa(@PathVariable Long id,
 			@RequestBody TarefaRecordDto tarefaRecordDto) {
 		Tarefa tarefaAlterada = this.tarefaService.alteraTarefa(id, tarefaRecordDto);
-		return ResponseEntity.ok(tarefaAlterada);
+		TarefaDtoResposta tarefaDtoResposta = new TarefaDtoResposta(tarefaAlterada);
+		return ResponseEntity.ok(tarefaDtoResposta);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Tarefa> buscaTarefa(@PathVariable Long id) {
+	public ResponseEntity<TarefaDtoResposta> buscaTarefa(@PathVariable Long id) {
 		Tarefa tarefa = this.tarefaService.buscaTarefa(id);
-		return ResponseEntity.ok(tarefa);
+		TarefaDtoResposta tarefaDtoResposta = new TarefaDtoResposta(tarefa);
+		return ResponseEntity.ok(tarefaDtoResposta);
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<Tarefa>> buscaTarefas(Pageable pageable) {
+	public ResponseEntity<Page<TarefaDtoResposta>> buscaTarefas(Pageable pageable) {
 		Page<Tarefa> tarefas = this.tarefaService.buscaTarefas(pageable);
 		if (tarefas.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(tarefas);
+		
+		Page<TarefaDtoResposta> tarefaDtoResposta = tarefas.map(t -> new TarefaDtoResposta(t));
+		
+		return ResponseEntity.ok(tarefaDtoResposta);
 	}
 
 	@DeleteMapping("/{id}")

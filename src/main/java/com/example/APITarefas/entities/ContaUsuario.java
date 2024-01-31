@@ -48,9 +48,7 @@ public class ContaUsuario implements UserDetails, Serializable {
 		this.dataHoraCriacao = dataHoraCriacao;
 		this.dataHoraAlteracao = dataHoraAlteracao;
 		this.senha = senha;
-		if (papeis == null) {
-			this.papeis = new ArrayList<>();
-		} else {
+		if (papeis != null) {
 			this.papeis = papeis;
 		}
 	}
