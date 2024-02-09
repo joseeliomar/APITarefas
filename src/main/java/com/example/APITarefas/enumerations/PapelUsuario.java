@@ -1,16 +1,16 @@
 package com.example.APITarefas.enumerations;
 
 public enum PapelUsuario {
-	ROLE_ADMIN("Administrador");
+	ROLE_ADMIN("ROLE_ADMIN");
 	
-	private String descricao;
+	private String nome;
 	
-	PapelUsuario(String descricao) {
-		this.descricao = descricao;
+	PapelUsuario(String nome) {
+		this.nome = nome;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getNome() {
+		return nome;
 	}
 	
 }

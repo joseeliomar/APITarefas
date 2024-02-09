@@ -8,6 +8,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +26,7 @@ public class Etiqueta implements Serializable {
 	private String titulo;
 
 	@JsonIgnore
-	@ManyToMany(mappedBy = "etiquetas")
+	@ManyToMany(mappedBy = "etiquetas", fetch = FetchType.EAGER)
 	private List<Tarefa> tarefas = new ArrayList<>();
 	
 	public Etiqueta() {

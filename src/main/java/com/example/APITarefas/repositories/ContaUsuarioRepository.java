@@ -9,7 +9,7 @@ import com.example.APITarefas.entities.ContaUsuario;
 public interface ContaUsuarioRepository extends JpaRepository<ContaUsuario, Long> {
 
 	ContaUsuario findByEmail(String emailUsuario);
-	
+
 	ContaUsuario findByEmailAndIdNot(String emailUsuario, Long id);
 
 }

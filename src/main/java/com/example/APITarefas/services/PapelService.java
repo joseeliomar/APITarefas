@@ -23,7 +23,7 @@ public class PapelService {
 	 */
 	public Papel inserePapel(PapelUsuario papelUsuario) {
 		if (papelUsuario == null) {
-			throw new ValidacaoException("O papel do usuário não foi encontrado.", HttpStatus.NOT_FOUND);
+			throw new ValidacaoException("O papel do usuário não foi informado.", HttpStatus.NOT_FOUND);
 		}
 		
 		return this.papelRepository.save(new Papel(papelUsuario));

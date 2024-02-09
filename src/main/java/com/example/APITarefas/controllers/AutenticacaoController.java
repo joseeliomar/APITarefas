@@ -21,14 +21,17 @@ public class AutenticacaoController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Autowired
 	private TokenService tokenService;
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody DadosAutenticacaoDto dadosAutenticacao) {
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(dadosAutenticacao.email(), dadosAutenticacao.senha());
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+				dadosAutenticacao.email(), dadosAutenticacao.senha());
+		
 		Authentication authentication = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+		
 		String tokenGerado = this.tokenService.geraToken((ContaUsuario) authentication.getPrincipal());
 		return ResponseEntity.ok(new TokenRespostaDto(tokenGerado));
 	}

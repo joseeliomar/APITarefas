@@ -19,7 +19,7 @@ public class EtiquetaService {
 
 	@Autowired
 	private EtiquetaRepository etiquetaRepository;
-
+	
 	/**
 	 * Busca etiqueta pelo id informado.
 	 * 

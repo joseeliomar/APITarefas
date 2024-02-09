@@ -14,10 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.APITarefas.enumerations.PapelUsuario;
+
 @Configuration
 @EnableWebSecurity
 public class ConfiguracaoesSeguranca {
-	
+
 	@Autowired
 	private FiltroSeguranca filtroSeguranca;
 
@@ -25,10 +27,13 @@ public class ConfiguracaoesSeguranca {
 	public SecurityFilterChain cadeiaFiltrosSeguranca(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(authorize -> authorize.requestMatchers(HttpMethod.POST, "/autenticacao/login")
-						.permitAll().anyRequest().authenticated())
-				.addFilterBefore(this.filtroSeguranca, UsernamePasswordAuthenticationFilter.class)
-				.build();
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
+						.requestMatchers(HttpMethod.POST, "/contas-usuarios").permitAll()
+						.requestMatchers(HttpMethod.GET, "/contas-usuarios/todas")
+						.hasAnyAuthority(PapelUsuario.ROLE_ADMIN.getNome())
+						.anyRequest().authenticated())
+				.addFilterBefore(this.filtroSeguranca, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean

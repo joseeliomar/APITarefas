@@ -22,10 +22,10 @@ public class FiltroSeguranca extends OncePerRequestFilter {
 
 	@Autowired
 	private TokenService tokenService;
-	
+
 	@Autowired
 	private ContaUsuarioService contaUsuarioService;
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -33,11 +33,14 @@ public class FiltroSeguranca extends OncePerRequestFilter {
 		if (token != null) {
 			String emailUsuario = this.tokenService.extraiEmailUsuario(token);
 			UserDetails userDetails = contaUsuarioService.loadUserByUsername(emailUsuario);
-			
-			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+			if (userDetails != null) {
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			}
 		}
-		
+
 		filterChain.doFilter(request, response);
 	}
 

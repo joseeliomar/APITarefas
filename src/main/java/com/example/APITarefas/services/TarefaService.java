@@ -43,8 +43,8 @@ public class TarefaService {
 	 * @param tarefaRecordDto
 	 * @return a tarefa inserida.
 	 */
-	public Tarefa insereTarefa(String emailUsuario, TarefaRecordDto tarefaRecordDto) {
-		Tarefa tarefaInserida = salvaTarefa(emailUsuario, tarefaRecordDto, null);
+	public Tarefa insereTarefa(TarefaRecordDto tarefaRecordDto) {
+		Tarefa tarefaInserida = salvaTarefa(tarefaRecordDto, null);
 		return tarefaInserida;
 	}
 
@@ -58,7 +58,8 @@ public class TarefaService {
 	 * @param tarefaSerAlterada a tarefa a ser alterada.
 	 * @return a tarefa salva.
 	 */
-	private Tarefa salvaTarefa(String emailUsuario, TarefaRecordDto tarefaRecordDto, Tarefa tarefaSerAlterada) {
+	private Tarefa salvaTarefa(TarefaRecordDto tarefaRecordDto, Tarefa tarefaSerAlterada) {
+		Long idContaUsuario = tarefaRecordDto.idContaUsuario();
 		String tituloTarefa = tarefaRecordDto.titulo();
 		String descricaoTarefa = tarefaRecordDto.descricao();
 		LocalDateTime dataHoraNotificacaoTarefa = tarefaRecordDto.dataHoraNotificacao();
@@ -67,7 +68,7 @@ public class TarefaService {
 
 		PersonalizacaoNotificacaoDto personalizacaoNotificacaoDto = tarefaRecordDto.personalizacaoNotificacaoDto();
 
-		ContaUsuario contaUsuario = this.contaUsuarioService.buscaContaUsuario(emailUsuario);
+		ContaUsuario contaUsuario = this.contaUsuarioService.buscaContaUsuario(idContaUsuario);
 
 		if (Utils.stringNulaVaziaOuEmBraco(tituloTarefa)) {
 			throw new ValidacaoException("O título da tarefa não foi informado.", HttpStatus.BAD_REQUEST);
@@ -104,7 +105,7 @@ public class TarefaService {
 			tarefaSerAlterada.setPersonalizacaoNotificacao(personalizacaoNotificacaoInserida);
 			List<Etiqueta> etiquetasTarefa = tarefaSerAlterada.getEtiquetas();
 			etiquetasTarefa.clear();
-			etiquetasTarefa.addAll(etiquetas); 
+			etiquetasTarefa.addAll(etiquetas);
 			return this.tarefaRepository.save(tarefaSerAlterada);
 		} else {
 			Tarefa tarefa = new Tarefa(contaUsuario, tituloTarefa, descricaoTarefa, LocalDateTime.now(), null,
@@ -114,14 +115,16 @@ public class TarefaService {
 	}
 
 	/**
-	 * Busca tarefa pelo e-mail e id que foram informados.
+	 * Busca uma tarefa pelo e-mail da conta de usuário e id da tarefa que foram
+	 * informados.
 	 * 
-	 * @param id
-	 * @return a tarefa correspondente ao e-mail e ao id que foram informados.
+	 * @param idTarefa
+	 * @return a tarefa correspondente ao e-mail da conta de usuário e ao id da
+	 *         tarefa que foram informados.
 	 */
-	public Tarefa buscaTarefa(String email, Long id) {
-		validaIdTarefaInformado(id);
-		Optional<Tarefa> optionalTarefa = this.tarefaRepository.findByIdAndContaUsuario_Email(id, email);
+	public Tarefa buscaTarefa(Long idTarefa) {
+		validaIdTarefaInformado(idTarefa);
+		Optional<Tarefa> optionalTarefa = this.tarefaRepository.findById(idTarefa);
 
 		if (optionalTarefa.isEmpty()) {
 			throw new ValidacaoException("Tarefa não encontrada.", HttpStatus.NOT_FOUND);
@@ -134,10 +137,10 @@ public class TarefaService {
 	/**
 	 * Valida se o código da tarefa não foi informado.
 	 * 
-	 * @param id
+	 * @param idTarefa
 	 */
-	private void validaIdTarefaInformado(Long id) {
-		if (id == null) {
+	private void validaIdTarefaInformado(Long idTarefa) {
+		if (idTarefa == null) {
 			throw new ValidacaoException("O código da tarefa não foi informado.", HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -148,33 +151,34 @@ public class TarefaService {
 	 * @param pageable
 	 * @return tarefas.
 	 */
-	public Page<Tarefa> buscaTarefas(String email, Pageable pageable) {
-		Page<Tarefa> tarefas = this.tarefaRepository.findByContaUsuario_Email(email, pageable);
+	public Page<Tarefa> buscaTarefas(Pageable pageable) {
+		Page<Tarefa> tarefas = this.tarefaRepository.findAll(pageable);
 		return tarefas;
 	}
 
 	/**
-	 * Remove uma tarefa pelo id informado.
+	 * Remove uma tarefa pelo e-mail da conta de usuário e id da tarefa que foram
+	 * informados.
 	 * 
-	 * @param id
+	 * @param idTarefa
 	 */
-	public void removeTarefa(String email, Long id) {
-		Tarefa tarefa = this.buscaTarefa(email, id);
+	public void removeTarefa(Long idTarefa) {
+		Tarefa tarefa = this.buscaTarefa(idTarefa);
 		this.tarefaRepository.delete(tarefa);
 	}
 
 	/**
 	 * Altera uma tarefa.
 	 * 
-	 * @param id
+	 * @param idTarefa
 	 * @param tarefaRecordDto
 	 * @return a tarefa alterada.
 	 */
-	public Tarefa alteraTarefa(String emailUsuario, Long id, TarefaRecordDto tarefaRecordDto) {
-		Tarefa tarefa = buscaTarefa(emailUsuario, id);
+	public Tarefa alteraTarefa(Long idTarefa, TarefaRecordDto tarefaRecordDto) {
+		Tarefa tarefa = buscaTarefa(idTarefa);
 		Long idPersonalizacaoNotificacaoTarefa = tarefa.getPersonalizacaoNotificacao().getId();
 		this.personalizacaoNotificacaoService.removePersonalizacaoNotificacao(idPersonalizacaoNotificacaoTarefa);
-		Tarefa tarefaAlterada = salvaTarefa(emailUsuario, tarefaRecordDto, tarefa);
+		Tarefa tarefaAlterada = salvaTarefa(tarefaRecordDto, tarefa);
 		return tarefaAlterada;
 	}
 

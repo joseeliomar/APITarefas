@@ -70,4 +70,5 @@ public class ContaUsuarioController {
 		this.contaUsuarioService.removeContaUsuario(id);
 		return ResponseEntity.noContent().build();
 	}
+
 }

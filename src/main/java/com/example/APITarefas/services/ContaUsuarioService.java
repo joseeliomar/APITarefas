@@ -3,7 +3,6 @@ package com.example.APITarefas.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,7 @@ public class ContaUsuarioService implements UserDetailsService {
 
 	@Autowired
 	private ContaUsuarioRepository contaUsuarioRepository;
-	
+
 	@Autowired
 	private PapelService papelService;
 
@@ -50,15 +49,15 @@ public class ContaUsuarioService implements UserDetailsService {
 		}
 
 		String senhaContaCriptografada = Utils.criptografaString(senhaConta);
-		
+
 		List<Papel> papeisUsuarioInseridos = inserePapeisUsuario(papeisUsuario);
-		
+
 		ContaUsuario contaUsuario = new ContaUsuario(nomeUsuario, emailUsuario, LocalDateTime.now(), null,
 				senhaContaCriptografada, papeisUsuarioInseridos);
-		
+
 		return this.contaUsuarioRepository.save(contaUsuario);
 	}
-	
+
 	/**
 	 * Insere os papeis do usuário.
 	 * 
@@ -67,14 +66,14 @@ public class ContaUsuarioService implements UserDetailsService {
 	 */
 	private List<Papel> inserePapeisUsuario(List<PapelUsuario> papeisUsuario) {
 		List<Papel> papeis = new ArrayList<>();
-		
+
 		if (papeisUsuario != null) {
 			for (PapelUsuario papelUsuario : papeisUsuario) {
 				Papel papelInserido = this.papelService.inserePapel(papelUsuario);
 				papeis.add(papelInserido);
 			}
 		}
-		
+
 		return papeis;
 	}
 
@@ -90,20 +89,31 @@ public class ContaUsuarioService implements UserDetailsService {
 		if (Utils.stringNulaVaziaOuEmBraco(nomeUsuario)) {
 			throw new ValidacaoException("O nome do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
-		validaEmailInformado(emailUsuario);
+		validaEmailUsuarioNaoInformado(emailUsuario);
 		if (Utils.stringNulaVaziaOuEmBraco(senhaConta)) {
 			throw new ValidacaoException("A senha não foi informada.", HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	/**
-	 *  Valida se o e-mail da conta do usuário não foi informado.
-	 *  
+	 * Valida se o e-mail da conta do usuário não foi informado.
+	 * 
 	 * @param emailUsuario
 	 */
-	private void validaEmailInformado(String emailUsuario) {
+	private void validaEmailUsuarioNaoInformado(String emailUsuario) {
 		if (Utils.stringNulaVaziaOuEmBraco(emailUsuario)) {
 			throw new ValidacaoException("O e-mail do usuário não foi informado.", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Valida se o código (id) da conta do usuário não foi informado.
+	 * 
+	 * @param idContaUsuario
+	 */
+	private void validaIdContaUsuarioNaoInformado(Long idContaUsuario) {
+		if (idContaUsuario == null || idContaUsuario == 0) {
+			throw new ValidacaoException("O código da conta do usuário não foi informado.", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -121,7 +131,7 @@ public class ContaUsuarioService implements UserDetailsService {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Verifica se já existe uma outra conta de usuário com o email informado.
 	 * 
@@ -142,31 +152,33 @@ public class ContaUsuarioService implements UserDetailsService {
 	/**
 	 * Altera uma conta de usuário.
 	 * 
-	 * @param id
+	 * @param id código da conta do usuário
 	 * @param contaUsuarioRecordDto
 	 * @return a conta alterada.
 	 */
-	public ContaUsuario alteraContaUsuario(String emailUsuario, Long id, ContaUsuarioRecordDto contaUsuarioRecordDto) {
-		ContaUsuario contaUsuario = buscaContaUsuario(emailUsuario);
-		
+	public ContaUsuario alteraContaUsuario(Long idContaUsuario, ContaUsuarioRecordDto contaUsuarioRecordDto) {
 		String nomeUsuario = contaUsuarioRecordDto.nomeUsuario();
+		String emailUsuario = contaUsuarioRecordDto.email();
 		String senhaConta = contaUsuarioRecordDto.senha();
 		List<PapelUsuario> papeisUsuario = contaUsuarioRecordDto.papeisUsuario();
-		
+
 		executaValidacoesInsercaoAlteracao(nomeUsuario, emailUsuario, senhaConta);
-		
+
+		ContaUsuario contaUsuario = buscaContaUsuario(idContaUsuario);
+
 		if (this.existeUmaOutraContaUsuarioComEmailInformado(emailUsuario, contaUsuario.getId())) {
-			throw new ValidacaoException("Já existe uma outra conta de usuário com o e-mail informado.", HttpStatus.CONFLICT);
+			throw new ValidacaoException("Já existe uma outra conta de usuário com o e-mail informado.",
+					HttpStatus.CONFLICT);
 		}
 
 		contaUsuario.setNomeUsuario(contaUsuarioRecordDto.nomeUsuario());
 		contaUsuario.setEmail(contaUsuarioRecordDto.email());
-		
+
 		String senhaContaCriptografada = Utils.criptografaString(senhaConta);
 		contaUsuario.setSenha(senhaContaCriptografada);
-		
+
 		contaUsuario.setDataHoraAlteracao(LocalDateTime.now());
-		
+
 		List<Papel> papeisContaUsuario = contaUsuario.getPapeis();
 		papeisContaUsuario.clear();
 		List<Papel> papeisUsuarioInseridos = inserePapeisUsuario(papeisUsuario);
@@ -176,20 +188,27 @@ public class ContaUsuarioService implements UserDetailsService {
 	}
 
 	/**
-	 * Busca conta de usuário pelo e-mail informado.
+	 * Busca conta de usuário pelo id informado.
 	 * 
-	 * @param id
+	 * @param idContaUsuario
 	 * @return a conta de usuário correspondente ao id informado.
 	 */
-	public ContaUsuario buscaContaUsuario(String email) {
-		validaEmailInformado(email);
-		ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmail(email);
-		
-		if (contaUsuario != null) {
+	public ContaUsuario buscaContaUsuario(Long idContaUsuario) {
+		validaIdContaUsuarioNaoInformado(idContaUsuario);
+		ContaUsuario contaUsuario = this.contaUsuarioRepository.findById(idContaUsuario).orElse(null);
+		validaContaUsuarioEncontrada(contaUsuario);
+		return contaUsuario;
+	}
+
+	/**
+	 * Valida se a conta de usuário foi encontrada.
+	 * 
+	 * @param contaUsuario
+	 */
+	private void validaContaUsuarioEncontrada(ContaUsuario contaUsuario) {
+		if (contaUsuario == null) {
 			throw new ValidacaoException("Conta de usuário não encontrada.", HttpStatus.NOT_FOUND);
 		}
-		
-		return contaUsuario;
 	}
 
 	/**
@@ -203,35 +222,22 @@ public class ContaUsuarioService implements UserDetailsService {
 	}
 
 	/**
-	 * Remove uma conta de usuário pelo id informado.
+	 * Remove uma conta de usuário pelo e-mail informado.
 	 * 
-	 * @param id
+	 * @param idContaUsuario
 	 */
-	public void removeContaUsuario(String email) {
-		ContaUsuario contaUsuario = this.buscaContaUsuario(email);
+	public void removeContaUsuario(Long idContaUsuario) {
+		ContaUsuario contaUsuario = this.buscaContaUsuario(idContaUsuario);
 		this.contaUsuarioRepository.delete(contaUsuario);
 	}
 
-	/**
-	 * Busca conta de usuário pelo e-mail informado.
-	 * 
-	 * @param email
-	 * @return a conta de usuário correspondente ao e-mail informado
-	 */
-	private ContaUsuario findByEmail(String email) {
-		validaEmailInformado(email);
-		ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmail(email);
-		
-		if (contaUsuario == null) {
-			throw new ValidacaoException("Conta de usuário não encontrada.", HttpStatus.NOT_FOUND);
-		}
-		
-		return contaUsuario;
-	}
-
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return findByEmail(username);
+	public UserDetails loadUserByUsername(String emailUsuario) throws UsernameNotFoundException {
+		if (!Utils.stringNulaVaziaOuEmBraco(emailUsuario)) {
+			ContaUsuario contaUsuario = this.contaUsuarioRepository.findByEmail(emailUsuario);
+			return contaUsuario;
+		}
+		return null;
 	}
 
 }
