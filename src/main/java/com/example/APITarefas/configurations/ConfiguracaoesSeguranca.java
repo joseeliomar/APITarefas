@@ -30,7 +30,7 @@ public class ConfiguracaoesSeguranca {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
 						.requestMatchers(HttpMethod.POST, "/contas-usuarios").permitAll()
-						.requestMatchers(HttpMethod.GET, "/contas-usuarios/todas")
+						.requestMatchers(HttpMethod.GET, "/contas-usuarios")
 						.hasAnyAuthority(PapelUsuario.ROLE_ADMIN.getNome())
 						.anyRequest().authenticated())
 				.addFilterBefore(this.filtroSeguranca, UsernamePasswordAuthenticationFilter.class).build();
