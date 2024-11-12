@@ -1,7 +1,7 @@
 ## API de tarefas
 
 ### Descrição
-Ela pode ser utilizada para a adiministração de tarefas do dia a dia e conta co os seguintes recursos:
+Essa é uma API pode ser utilizada para a adiministração de tarefas do dia a dia e conta co os seguintes recursos:
 - Gerenciamento de tarefas;
 - Gerenciamento de contas de usuários;
 - Gerenciamento de etiquetas (categorias) de tarefas.
